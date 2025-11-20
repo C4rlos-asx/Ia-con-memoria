@@ -39,7 +39,7 @@ services:
       - key: GEMINI_API_KEY
         sync: false
       - key: GEMINI_MODEL
-        value: gemini-pro
+        value: gemini-1.5-flash
       - key: FRONTEND_URL
         fromService:
           name: aion-ai-frontend
