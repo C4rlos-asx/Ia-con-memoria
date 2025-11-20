@@ -28,7 +28,7 @@ export async function generateWithMemory(
   userId: string,
   message: string,
   apiKey: string,
-  modelName: string = 'gemini-pro'
+  modelName: string = 'gemini-1.5-flash'
 ): Promise<{ response: string; conversationId: string }> {
   const pool = getPool();
 

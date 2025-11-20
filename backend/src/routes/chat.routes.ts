@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { generateWithMemory } from '../services/gemini.service';
 import { getPool } from '../config/database';
@@ -14,19 +14,19 @@ const chatSchema = z.object({
 });
 
 // POST /api/chat
-router.post('/', async (req, res) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
     const body = chatSchema.parse(req.body);
-    
+
     const apiKey = body.apiKey || process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(400).json({ 
-        error: 'API Key de Gemini requerida. Configúrala en la aplicación.' 
+      return res.status(400).json({
+        error: 'API Key de Gemini requerida. Configúrala en la aplicación.'
       });
     }
 
-    const modelName = body.modelName || process.env.GEMINI_MODEL || 'gemini-pro';
-    
+    const modelName = body.modelName || process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+
     const result = await generateWithMemory(
       body.userId,
       body.message,
@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/chat/history/:conversationId
-router.get('/history/:conversationId', async (req, res) => {
+router.get('/history/:conversationId', async (req: Request, res: Response) => {
   try {
     const { conversationId } = req.params;
     const pool = getPool();
