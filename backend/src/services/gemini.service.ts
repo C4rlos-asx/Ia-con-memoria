@@ -9,9 +9,12 @@ export function initGemini(apiKey: string) {
   return genAI;
 }
 
-export function getGeminiClient(apiKey: string) {
+export function getGeminiClient(apiKey: string): GoogleGenerativeAI {
   if (!genAI) {
     initGemini(apiKey);
+  }
+  if (!genAI) {
+    throw new Error("Gemini client not initialized");
   }
   return genAI;
 }
