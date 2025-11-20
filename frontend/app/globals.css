@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --aion-black: #0B0D0E;
+  --aion-gray: #121417;
+  --aion-green: #00E676;
+  --aion-green-secondary: #00B86B;
+  --aion-gray-light: #CBD5E1;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--aion-black);
+  color: #FFFFFF;
+  font-family: 'Inter', 'Poppins', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .aion-gradient {
+    background: radial-gradient(circle at center, rgba(0, 230, 118, 0.1) 0%, transparent 70%);
+  }
+  
+  .aion-glow {
+    box-shadow: 0 0 30px rgba(0, 230, 118, 0.5);
+  }
+  
+  .aion-card {
+    background: var(--aion-gray);
+    border-radius: 22px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  }
+  
+  .aion-border {
+    border: 1px solid rgba(0, 230, 118, 0.3);
+  }
+}

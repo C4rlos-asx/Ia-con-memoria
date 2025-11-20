@@ -1,0 +1,60 @@
+📐 Guía de Identidad Visual – AION Media Developers
+
+1. Paleta de Colores
+
+Basada en el contraste oscuro + acentos tecnológicos:
+	•	Negro profundo – #0B0D0E (fondos principales).
+	•	Gris oscuro – #121417 (paneles, tarjetas).
+	•	Blanco puro – #FFFFFF (tipografía de alto contraste).
+	•	Verde AION (neón/matrix) – #00E676 (acentos, botones primarios).
+	•	Verde secundario – #00B86B (hover, degradados secundarios).
+	•	Gris claro – #CBD5E1 (texto secundario).
+
+🔑 Uso: Fondo siempre oscuro con texto blanco. Verde AION reservado para acciones clave (botones, highlights, íconos).
+
+⸻
+
+2. Tipografía
+	•	Principal: Inter o Poppins (sans-serif moderna).
+	•	Pesos:
+	•	Bold (700–800) → títulos principales.
+	•	SemiBold (600) → subtítulos.
+	•	Regular (400) → párrafos.
+	•	Estilo: Limpio, con tracking ajustado (-0.02em en títulos).
+
+⸻
+
+3. Estilo Visual
+	•	Efecto glow en el verde (#00E676) para dar aspecto futurista.
+	•	Tarjetas con bordes redondeados (22px) y sombras difusas (box-shadow con blur 30px).
+	•	Fondos con degradados radiales sutiles en verde translúcido, simulando luz de neón.
+	•	Iconografía lineal (tipo outline, en blanco o verde).
+	•	Elementos geométricos minimalistas (líneas, grids, retículas tecnológicas).
+
+⸻
+
+4. Componentes Clave para Web/App
+	1.	Navbar fija: fondo negro semi-transparente, texto blanco, botón CTA en verde.
+	2.	Hero sections: título grande (h1) en blanco, subtítulo en gris claro, botón glow verde.
+	3.	Tarjetas (cards): panel gris oscuro con borde sutil verde.
+	4.	Botones CTA:
+	•	Fondo verde (#00E676), texto negro.
+	•	Hover: degradado verde → verde oscuro.
+	5.	Tablas comparativas:
+	•	Columnas con bordes en verde.
+	•	Precios destacados en grande, color verde brillante.
+	6.	Footers: fondo negro, tipografía en gris claro, logo en blanco.
+
+⸻
+
+5. Diseño de Presentaciones/PDF
+	•	Formato horizontal 16:9 tipo pitch deck.
+	•	Secciones separadas en slides con fondos oscuros y acentos verdes.
+	•	Elementos clave: badges verdes luminosos para títulos, barras inferiores con datos de contacto.
+
+⸻
+
+6. Micro-interacciones sugeridas (en web)
+	•	Hover en botones: brillo y leve expansión.
+	•	Íconos con animación de glow al pasar el mouse.
+	•	Secciones que aparecen con efecto fade + slide.

@@ -1,0 +1,76 @@
+services:
+  # Backend Service
+  - type: web
+    name: aion-ai-backend
+    env: node
+    plan: starter
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DB_HOST
+        fromDatabase:
+          name: aion-ai-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: aion-ai-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: aion-ai-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: aion-ai-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: aion-ai-db
+          property: password
+      - key: REDIS_URL
+        fromService:
+          name: aion-ai-redis
+          type: redis
+          property: connectionString
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-pro
+      - key: FRONTEND_URL
+        fromService:
+          name: aion-ai-frontend
+          type: web
+          property: host
+
+  # Frontend Service
+  - type: web
+    name: aion-ai-frontend
+    env: node
+    plan: starter
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: aion-ai-backend
+          type: web
+          property: host
+
+  # PostgreSQL Database
+  - type: pspg
+    name: aion-ai-db
+    plan: starter
+    databaseName: aion_ai
+    user: aion_user
+
+  # Redis Cache
+  - type: redis
+    name: aion-ai-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
