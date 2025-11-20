@@ -75,7 +75,7 @@ export async function generateWithMemory(
   // 3. Verificar cache en Redis
   const cacheKey = `gemini:${userId}:${Buffer.from(message).toString('base64').substring(0, 50)}`;
   const cached = await cacheGet(cacheKey);
-  
+
   if (cached) {
     const cachedResponse = JSON.parse(cached);
     // Guardar respuesta cacheada también
@@ -88,13 +88,13 @@ export async function generateWithMemory(
   }
 
   // 4. Construir contexto para Gemini
-  const contextMessages = recentMessages.rows.reverse().map(msg => ({
+  const contextMessages = recentMessages.rows.reverse().map((msg: { role: string; content: string }) => ({
     role: msg.role === 'user' ? 'user' : 'model',
     parts: [{ text: msg.content }]
   }));
 
   const memoryContext = memories.rows.length > 0
-    ? `\nMemoria del usuario:\n${memories.rows.map(m => `- ${m.key}: ${m.value}`).join('\n')}\n`
+    ? `\nMemoria del usuario:\n${memories.rows.map((m: { key: string; value: string }) => `- ${m.key}: ${m.value}`).join('\n')}\n`
     : '';
 
   // 5. Generar respuesta con Gemini
@@ -149,7 +149,7 @@ Responde de manera clara y concisa.`;
 
 export async function saveMemory(userId: string, key: string, value: string, context: Record<string, any> = {}) {
   const pool = getPool();
-  
+
   await pool.query(
     `INSERT INTO memory (user_id, key, value, context) 
      VALUES ($1, $2, $3, $4)
@@ -164,7 +164,7 @@ export async function saveMemory(userId: string, key: string, value: string, con
 
 export async function getMemory(userId: string, key?: string) {
   const pool = getPool();
-  
+
   if (key) {
     const result = await pool.query(
       `SELECT key, value, context FROM memory WHERE user_id = $1 AND key = $2`,
