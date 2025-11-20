@@ -3,8 +3,8 @@ services:
   - type: web
     name: aion-ai-backend
     env: node
-    plan: starter
-    buildCommand: cd backend && npm install && npm run build
+    plan: free
+    buildCommand: cd backend && npm install --production=false && npm run build
     startCommand: cd backend && npm start
     envVars:
       - key: NODE_ENV
@@ -50,8 +50,8 @@ services:
   - type: web
     name: aion-ai-frontend
     env: node
-    plan: starter
-    buildCommand: cd frontend && npm install && npm run build
+    plan: free
+    buildCommand: cd frontend && npm install --production=false && npm run build
     startCommand: cd frontend && npm start
     envVars:
       - key: NODE_ENV
@@ -62,15 +62,15 @@ services:
           type: web
           property: host
 
-  # PostgreSQL Database
-  - type: pspg
-    name: aion-ai-db
-    plan: starter
-    databaseName: aion_ai
-    user: aion_user
-
   # Redis Cache
   - type: redis
     name: aion-ai-redis
-    plan: starter
+    plan: free
     maxmemoryPolicy: allkeys-lru
+
+databases:
+  # PostgreSQL Database
+  - name: aion-ai-db
+    plan: free
+    databaseName: aion_ai
+    user: aion_user
