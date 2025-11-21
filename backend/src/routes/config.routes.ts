@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { getPool } from '../config/database';
 
@@ -11,7 +11,7 @@ const configSchema = z.object({
 });
 
 // POST /api/config
-router.post('/', async (req, res) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
     const body = configSchema.parse(req.body);
     const pool = getPool();
@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/config/:userId
-router.get('/:userId', async (req, res) => {
+router.get('/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { key } = req.query;
@@ -57,10 +57,7 @@ router.get('/:userId', async (req, res) => {
       );
     }
 
-    const configs = result.rows.reduce((acc: Record<string, string>, row: any) => {
-      acc[row.key] = row.value;
-      return acc;
-    }, {});
+    const configs = result.rows;
 
     res.json({
       success: true,
@@ -73,7 +70,7 @@ router.get('/:userId', async (req, res) => {
 });
 
 // DELETE /api/config/:userId/:key
-router.delete('/:userId/:key', async (req, res) => {
+router.delete('/:userId/:key', async (req: Request, res: Response) => {
   try {
     const { userId, key } = req.params;
     const pool = getPool();
