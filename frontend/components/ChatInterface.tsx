@@ -72,7 +72,7 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
         setConversationId(response.conversationId)
       }
     } catch (error: any) {
-      console.error('Error al enviar mensaje:', error)
+      console.error('Error al enviar mensaje') // Log genérico para seguridad
       const errorMessage: Message = {
         role: 'assistant',
         content: `Error: ${error.response?.data?.error || error.message || 'Error desconocido'}`,

@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getPool } from '../config/database';
 import { cacheGet, cacheSet } from '../config/redis';
+import { encrypt, decrypt } from './encryption.service';
 
 let genAI: GoogleGenerativeAI | null = null;
 
@@ -52,11 +53,11 @@ export async function generateWithMemory(
     conversationId = existing.rows[0]?.id || conversationResult.rows[0]?.id;
   }
 
-  // Guardar mensaje del usuario
+  // Guardar mensaje del usuario (ENCRIPTADO)
   await pool.query(
     `INSERT INTO messages (conversation_id, role, content) 
      VALUES ($1, $2, $3)`,
-    [conversationId, 'user', message]
+    [conversationId, 'user', encrypt(message)]
   );
 
   // 2. Obtener contexto de memoria (últimas 10 conversaciones + memorias relevantes)
@@ -90,11 +91,11 @@ export async function generateWithMemory(
   // 4. Construir contexto para Gemini
   const contextMessages = recentMessages.rows.reverse().map((msg: { role: string; content: string }) => ({
     role: msg.role === 'user' ? 'user' : 'model',
-    parts: [{ text: msg.content }]
+    parts: [{ text: decrypt(msg.content) }] // Desencriptar para el contexto
   }));
 
   const memoryContext = memories.rows.length > 0
-    ? `\nMemoria del usuario:\n${memories.rows.map((m: { key: string; value: string }) => `- ${m.key}: ${m.value}`).join('\n')}\n`
+    ? `\nMemoria del usuario:\n${memories.rows.map((m: { key: string; value: string }) => `- ${m.key}: ${decrypt(m.value)}`).join('\n')}\n`
     : '';
 
   // 5. Generar respuesta con Gemini
@@ -125,11 +126,11 @@ Responde de manera clara y concisa.`;
     const result = await chat.sendMessage(message);
     const response = result.response.text();
 
-    // 6. Guardar respuesta en DB
+    // 6. Guardar respuesta en DB (ENCRIPTADO)
     await pool.query(
       `INSERT INTO messages (conversation_id, role, content) 
        VALUES ($1, $2, $3)`,
-      [conversationId, 'assistant', response]
+      [conversationId, 'assistant', encrypt(response)]
     );
 
     // 7. Cachear respuesta en Redis (1 hora)
@@ -156,7 +157,7 @@ export async function saveMemory(userId: string, key: string, value: string, con
      VALUES ($1, $2, $3, $4)
      ON CONFLICT (user_id, key) 
      DO UPDATE SET value = $3, context = $4, updated_at = CURRENT_TIMESTAMP`,
-    [userId, key, value, JSON.stringify(context)]
+    [userId, key, encrypt(value), JSON.stringify(context)]
   );
 
   // También cachear en Redis
@@ -171,6 +172,9 @@ export async function getMemory(userId: string, key?: string) {
       `SELECT key, value, context FROM memory WHERE user_id = $1 AND key = $2`,
       [userId, key]
     );
+    if (result.rows[0]) {
+      result.rows[0].value = decrypt(result.rows[0].value);
+    }
     return result.rows[0] || null;
   }
 
@@ -178,5 +182,8 @@ export async function getMemory(userId: string, key?: string) {
     `SELECT key, value, context FROM memory WHERE user_id = $1 ORDER BY updated_at DESC`,
     [userId]
   );
-  return result.rows;
+  return result.rows.map(row => ({
+    ...row,
+    value: decrypt(row.value)
+  }));
 }

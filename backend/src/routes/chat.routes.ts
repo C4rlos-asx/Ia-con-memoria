@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { generateWithMemory } from '../services/gemini.service';
+import { decrypt } from '../services/encryption.service';
 import { getPool } from '../config/database';
 
 const router = Router();
@@ -64,7 +65,10 @@ router.get('/history/:conversationId', async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      messages: messages.rows,
+      messages: messages.rows.map(msg => ({
+        ...msg,
+        content: decrypt(msg.content) // Desencriptar para el frontend
+      })),
     });
   } catch (error: any) {
     console.error('Error al obtener historial:', error);
