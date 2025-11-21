@@ -11,7 +11,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
-const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
+let frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+// Fix: Handle Render internal hostnames that miss the domain
+if (!frontendUrl.includes('localhost') && !frontendUrl.includes('.')) {
+  frontendUrl += '.onrender.com';
+}
+
+frontendUrl = frontendUrl.replace(/\/$/, '');
 const allowedOrigin = frontendUrl.startsWith('http') ? frontendUrl : `https://${frontendUrl}`;
 
 app.use(cors({
