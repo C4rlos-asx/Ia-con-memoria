@@ -1,7 +1,13 @@
 import axios from 'axios'
 
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
-const API_URL = rawApiUrl.startsWith('http') ? rawApiUrl : `https://${rawApiUrl}`
+let rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+// Fix: Handle Render internal hostnames that miss the domain
+if (!rawApiUrl.includes('localhost') && !rawApiUrl.includes('.')) {
+  rawApiUrl += '.onrender.com';
+}
+
+const API_URL = rawApiUrl.startsWith('http') ? rawApiUrl : `https://${rawApiUrl}`;
 
 const api = axios.create({
   baseURL: API_URL,
