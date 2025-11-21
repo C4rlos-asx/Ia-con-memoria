@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+const API_URL = rawApiUrl.startsWith('http') ? rawApiUrl : `https://${rawApiUrl}`
 
 const api = axios.create({
   baseURL: API_URL,
@@ -46,7 +47,7 @@ export const chatApi = {
     const response = await api.post<ChatResponse>('/api/chat', data)
     return response.data
   },
-  
+
   getHistory: async (conversationId: string) => {
     const response = await api.get(`/api/chat/history/${conversationId}`)
     return response.data.messages
@@ -58,12 +59,12 @@ export const memoryApi = {
     const response = await api.post('/api/memory', { userId, key, value, context })
     return response.data
   },
-  
+
   get: async (userId: string, key?: string) => {
     const response = await api.get(`/api/memory/${userId}${key ? `?key=${key}` : ''}`)
     return response.data.memories
   },
-  
+
   delete: async (userId: string, key: string) => {
     const response = await api.delete(`/api/memory/${userId}/${key}`)
     return response.data
@@ -75,12 +76,12 @@ export const configApi = {
     const response = await api.post('/api/config', { userId, key, value })
     return response.data
   },
-  
+
   get: async (userId: string, key?: string) => {
     const response = await api.get(`/api/config/${userId}${key ? `?key=${key}` : ''}`)
     return response.data.configs
   },
-  
+
   delete: async (userId: string, key: string) => {
     const response = await api.delete(`/api/config/${userId}/${key}`)
     return response.data
@@ -92,7 +93,7 @@ export const conversationsApi = {
     const response = await api.get(`/api/conversations/${userId}`)
     return response.data.conversations
   },
-  
+
   delete: async (conversationId: string) => {
     const response = await api.delete(`/api/conversations/${conversationId}`)
     return response.data
