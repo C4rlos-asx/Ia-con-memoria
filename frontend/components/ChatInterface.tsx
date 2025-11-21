@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, Loader2 } from 'lucide-react'
-import { chatApi, ChatMessage } from '@/lib/api'
+import { chatApi, configApi, ChatMessage } from '@/lib/api'
 
 interface ChatInterfaceProps {
   userId: string
@@ -40,10 +40,23 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
     setLoading(true)
 
     try {
+      // Fetch user config to get the selected model
+      let modelName = undefined;
+      try {
+        const configs = await configApi.get(userId);
+        const modelConfig = configs.find((c: any) => c.key === 'GEMINI_MODEL');
+        if (modelConfig) {
+          modelName = modelConfig.value;
+        }
+      } catch (err) {
+        console.error('Error fetching config:', err);
+      }
+
       const chatData: ChatMessage = {
         message: input,
         userId,
         conversationId: conversationId || undefined,
+        modelName,
       }
 
       const response = await chatApi.sendMessage(chatData)
@@ -95,11 +108,10 @@ export default function ChatInterface({ userId }: ChatInterfaceProps) {
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] rounded-2xl p-4 ${
-                  message.role === 'user'
-                    ? 'bg-aion-green text-black'
-                    : 'bg-aion-gray aion-border text-white'
-                }`}
+                className={`max-w-[80%] rounded-2xl p-4 ${message.role === 'user'
+                  ? 'bg-aion-green text-black'
+                  : 'bg-aion-gray aion-border text-white'
+                  }`}
               >
                 <p className="whitespace-pre-wrap">{message.content}</p>
               </div>
