@@ -18,7 +18,6 @@ const GEMINI_MODELS = [
 ]
 
 export default function ConfigPanel({ userId }: ConfigPanelProps) {
-    const [apiKey, setApiKey] = useState('')
     const [modelName, setModelName] = useState('gemini-1.5-pro')
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
@@ -30,10 +29,8 @@ export default function ConfigPanel({ userId }: ConfigPanelProps) {
     const loadConfig = async () => {
         try {
             const configs = await configApi.get(userId)
-            const apiKeyConfig = configs.find((c: any) => c.key === 'GEMINI_API_KEY')
             const modelConfig = configs.find((c: any) => c.key === 'GEMINI_MODEL')
 
-            if (apiKeyConfig) setApiKey(apiKeyConfig.value)
             if (modelConfig) setModelName(modelConfig.value)
         } catch (error) {
             console.error('Error al cargar configuración:', error)
@@ -45,11 +42,7 @@ export default function ConfigPanel({ userId }: ConfigPanelProps) {
         setMessage(null)
 
         try {
-            if (apiKey) {
-                await configApi.save(userId, 'GEMINI_API_KEY', apiKey)
-            }
             await configApi.save(userId, 'GEMINI_MODEL', modelName)
-
             setMessage({ type: 'success', text: '✅ Configuración guardada correctamente' })
         } catch (error: any) {
             setMessage({ type: 'error', text: `❌ Error: ${error.message}` })
@@ -63,23 +56,6 @@ export default function ConfigPanel({ userId }: ConfigPanelProps) {
             <div className="flex items-center gap-3 mb-6">
                 <Settings className="w-6 h-6 text-aion-green" />
                 <h2 className="text-2xl font-bold">Configuración de IA</h2>
-            </div>
-
-            {/* API Key */}
-            <div className="space-y-2">
-                <label className="block text-sm font-semibold text-aion-gray-light">
-                    API Key de Gemini (Opcional)
-                </label>
-                <input
-                    type="password"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="Deja vacío para usar la key del servidor"
-                    className="w-full bg-aion-gray border aion-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-aion-green focus:border-transparent"
-                />
-                <p className="text-xs text-aion-gray-light">
-                    Si no proporcionas una key, se usará la configurada en el servidor.
-                </p>
             </div>
 
             {/* Model Selection */}
@@ -142,7 +118,7 @@ export default function ConfigPanel({ userId }: ConfigPanelProps) {
             <div className="bg-aion-gray/50 border aion-border rounded-lg p-4 space-y-2">
                 <h3 className="font-semibold text-aion-green">ℹ️ Información</h3>
                 <ul className="text-sm text-aion-gray-light space-y-1 list-disc list-inside">
-                    <li>Obtén tu API Key en <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-aion-green hover:underline">Google AI Studio</a></li>
+                    <li>La API Key está configurada en el servidor (Render)</li>
                     <li>Los modelos más recientes pueden tener mejor rendimiento</li>
                     <li>Si un modelo da error 404, prueba con otro de la lista</li>
                 </ul>

@@ -1,21 +1,51 @@
-userId: z.string().min(1),
+import { Router, Request, Response } from 'express';
+import { z } from 'zod';
+import { generateWithMemory } from '../services/gemini.service';
+import { getPool } from '../config/database';
+
+const router = Router();
+
+const chatSchema = z.object({
+  message: z.string().min(1).max(10000),
+  userId: z.string().min(1),
   conversationId: z.string().uuid().optional(),
-    apiKey: z.string().optional(),
-      modelName: z.string().optional(),
+  apiKey: z.string().optional(),
+  modelName: z.string().optional(),
+});
+
+// POST /api/chat
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    const body = chatSchema.parse(req.body);
+
+    const apiKey = body.apiKey || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(400).json({
+        error: 'API Key de Gemini requerida. Configúrala en la aplicación.'
+      });
+    }
+
+    const modelName = body.modelName || process.env.GEMINI_MODEL || 'gemini-1.5-pro';
+
+    const result = await generateWithMemory(
+      body.userId,
+      body.message,
+      apiKey,
+      modelName
     );
 
-res.json({
-  success: true,
-  response: result.response,
-  conversationId: result.conversationId,
-});
+    res.json({
+      success: true,
+      response: result.response,
+      conversationId: result.conversationId,
+    });
   } catch (error: any) {
-  if (error instanceof z.ZodError) {
-    return res.status(400).json({ error: 'Datos inválidos', details: error.errors });
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Datos inválidos', details: error.errors });
+    }
+    console.error('Error en chat:', error);
+    res.status(500).json({ error: error.message || 'Error al procesar mensaje' });
   }
-  console.error('Error en chat:', error);
-  res.status(500).json({ error: error.message || 'Error al procesar mensaje' });
-}
 });
 
 // GET /api/chat/history/:conversationId
