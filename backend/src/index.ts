@@ -50,6 +50,7 @@ async function startServer() {
     // Iniciar servidor
     app.listen(PORT, () => {
       console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
+      console.log('✨ Backend v1.1 - Gemini SDK Updated');
     });
   } catch (error) {
     console.error('❌ Error al iniciar servidor:', error);

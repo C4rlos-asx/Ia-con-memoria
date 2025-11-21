@@ -98,6 +98,7 @@ export async function generateWithMemory(
     : '';
 
   // 5. Generar respuesta con Gemini
+  console.log(`🤖 Using Gemini Model: ${modelName}`);
   const client = getGeminiClient(apiKey);
   const model = client.getGenerativeModel({ model: modelName });
 
