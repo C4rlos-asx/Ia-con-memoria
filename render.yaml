@@ -44,7 +44,7 @@ services:
         fromService:
           name: aion-ai-frontend
           type: web
-          property: host
+          property: url
 
   # Frontend Service
   - type: web
@@ -60,7 +60,7 @@ services:
         fromService:
           name: aion-ai-backend
           type: web
-          property: host
+          property: url
 
   # Redis Cache
   - type: redis
